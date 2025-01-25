@@ -26,12 +26,14 @@ fetch(URL, {
       col.classList.add("col");
 
       const card = document.createElement("div");
-      card.classList.add("card");
+      card.classList.add("card", "text-center", "mb-4");
 
       const img = document.createElement("img");
       img.classList.add("card-img-top");
       img.alt = singleProduct.name;
       img.src = singleProduct.imageUrl;
+      img.style.height = "200px";
+      img.style.objectFit = "cover";
 
       const cardBody = document.createElement("div");
       cardBody.classList.add("card-body");
@@ -45,27 +47,49 @@ fetch(URL, {
       p.innerText = singleProduct.price + " € ";
 
       const a = document.createElement("a");
-      a.classList.add("ink-opacity-50");
-      a.href = "./details.html";
+      a.classList.add("link-offset-2", "link-underline", "link-underline-opacity-50", "d-block", "my-3");
+      a.href = `./details.html?prodId=${singleProduct._id}`;
       a.innerText = "Dettagli";
 
-      const buttonMod = document.createElement("button");
+      const buttonMod = document.createElement("a");
       buttonMod.classList.add("btn", "btn-primary", "w-100", "my-2");
       buttonMod.innerText = "Modifica";
-
-      const buttonDlt = document.createElement("button");
-      buttonDlt.classList.add("btn", "btn-danger", "w-100", "my-2");
-      buttonDlt.innerText = "Cancella";
+      buttonMod.href = `./backoffice.html?prodId=${singleProduct._id}`;
 
       cardBody.appendChild(h5);
       cardBody.appendChild(p);
       cardBody.appendChild(a);
       cardBody.appendChild(buttonMod);
-      cardBody.appendChild(buttonDlt);
       card.appendChild(img);
       card.appendChild(cardBody);
       col.appendChild(card);
       row.appendChild(col);
     });
   })
-  .catch((err) => console.dir(err));
+  .catch((err) => {
+    console.dir(err);
+    generateAlert(err.message);
+  })
+  .finally(() => {
+    isLoading(false);
+  });
+
+const isLoading = function (loadingState) {
+  const spinner = document.querySelector(".spinner-grow");
+  if (loadingState) {
+    spinner.classList.remove("d-none");
+  } else {
+    spinner.classList.add("d-none");
+  }
+};
+
+const generateAlert = function (message) {
+  const alertContainer = document.getElementById("alert-container");
+  alertContainer.innerHTML = `   
+   <div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading">Attenzione !!!</h4>
+    <p>${message}</p>
+    <hr>
+    <p class="mb-0">Riprova più tardi</p>
+  </div>`;
+};
